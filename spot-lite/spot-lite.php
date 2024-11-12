@@ -13,9 +13,9 @@
  * @package           Spot_Lite
  *
  * @wordpress-plugin
- * Plugin Name:       WordPress Plugin Boilerplate
+ * Plugin Name:      	Spot Lite
  * Plugin URI:        http://lite.acad.univali.br/spot-lite/
- * Description:       asdsd
+ * Description:       Um criador de relatórios de atividades com inteligencia e automação.
  * Version:           1.0.0
  * Author:            Lite Univali
  * Author URI:        http://lite.acad.univali.br/
@@ -34,7 +34,7 @@ if (!defined('WPINC')) {
  * Rename this for your plugin and update it as you release new versions.
  */
 define('SPOT_LITE_VERSION', '1.0.0');
-
+define('ROOT_PLUGIN_URI', plugin_dir_url(__FILE__));
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-spot-lite-activator.php

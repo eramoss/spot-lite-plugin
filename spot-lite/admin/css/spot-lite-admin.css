@@ -2,3 +2,9 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
+
+
+#toplevel_page_spot-lite-admin-partials-plugin-spot-lite-display>a>div:nth-child(2)>img:nth-child(1) {
+  width: 1.25em;
+  opacity: 1;
+}

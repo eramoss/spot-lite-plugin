@@ -75,4 +75,16 @@ class Spot_Lite_Admin
 		wp_enqueue_script($this->Spot_Lite, plugin_dir_url(__FILE__) . 'js/spot-lite-admin.js', array('jquery'), $this->version, false);
 	}
 
+	public function add_plugin_admin_menu()
+	{
+		add_menu_page(
+			'Spot Lite',
+			'Regitros',
+			'manage_options',
+			plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-display.php',
+			null,
+			ROOT_PLUGIN_URI . 'public/img/icon-light.png',
+			6
+		);
+	}
 }
