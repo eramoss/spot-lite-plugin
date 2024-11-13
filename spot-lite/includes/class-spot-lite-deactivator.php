@@ -31,7 +31,17 @@ class Spot_Lite_Deactivator
 	 */
 	public static function deactivate()
 	{
-
+		if (defined('DEBUG_SPOT_LITE') && DEBUG_SPOT_LITE) {
+			error_log('Spot Lite deactivated');
+			self::clear_db();
+		}
 	}
 
+
+	private static function clear_db()
+	{
+		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-database.php';
+		$database = Spot_Lite_Database::get_instance();
+		$database->clear_all();
+	}
 }

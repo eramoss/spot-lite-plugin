@@ -35,6 +35,8 @@ if (!defined('WPINC')) {
  */
 define('SPOT_LITE_VERSION', '1.0.0');
 define('ROOT_PLUGIN_URI', plugin_dir_url(__FILE__));
+define('ROOT_PLUGIN_PATH', plugin_dir_path(__FILE__));
+define('DEBUG_SPOT_LITE', true);
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-spot-lite-activator.php

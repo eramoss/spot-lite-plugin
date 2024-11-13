@@ -24,3 +24,7 @@
 if (!defined('WP_UNINSTALL_PLUGIN')) {
 	exit;
 }
+
+require_once plugin_dir_path(__FILE__) . 'includes/class-database.php';
+$database = Spot_Lite_Database::get_instance();
+$database->drop_schema();
