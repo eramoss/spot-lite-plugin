@@ -272,44 +272,6 @@ class Spot_Lite_Database
     }
   }
 
-
-  public function populate()
-  {
-    $this->insert_project('Projeto 1', 'Descrição do projeto 1', '2021-01-01', '2021-12-31', 'Em andamento');
-    $this->insert_project('Projeto 2', 'Descrição do projeto 2', '2021-01-01', '2021-12-31', 'Em andamento');
-    $this->insert_project('Projeto 3', 'Descrição do projeto 3', '2021-01-01', '2021-12-31', 'Em andamento');
-    $this->insert_project('Projeto 4', 'Descrição do projeto 4', '2021-01-01', '2021-12-31', 'Em andamento');
-    $this->insert_project('Projeto 5', 'Descrição do projeto 5', '2021-01-01', '2021-12-31', 'Em andamento');
-    $this->insert_project('Projeto 6', 'Descrição do projeto 6', '2021-01-01', '2021-12-31', 'Em andamento');
-    $this->insert_project('Projeto 7', 'Descrição do projeto 7', '2021-01-01', '2021-12-31', 'Em andamento');
-    $this->insert_project('Projeto 8', 'Descrição do projeto 8', '2021-01-01', '2021-12-31', 'Em andamento');
-    $this->insert_project('Projeto 9', 'Descrição do projeto 9', '2021-01-01', '2021-12-31', 'Em andamento');
-    $this->insert_project('Projeto 10', 'Descrição do projeto 10', '2021-01-01', '2021-12-31', 'Em andamento');
-
-
-    $this->insert_participant('Participante 1', 20, 'Escola 1');
-    $this->insert_participant('Participante 2', 21, 'Escola 2');
-    $this->insert_participant('Participante 3', 22, 'Escola 3');
-
-
-    $this->insert_report(1, 'Relatório 1', 'Descrição do evento 1', '2021-01-01', 1, 'robos');
-    $this->insert_report(1, 'Relatório 2', 'Descrição do evento 2', '2021-01-01', 1, 'evento');
-    $this->insert_report(1, 'Relatório 3', 'Descrição do evento 3', '2021-01-01', 1, 'evento');
-
-    $this->insert_activity(1, 1, 'Atividade 1', '2021-01-01', '2021-01-02', 'Concluída');
-    $this->insert_activity(1, 1, 'Atividade 2', '2021-01-01', '2021-01-02', 'Concluída');
-    $this->insert_activity(1, 1, 'Atividade 3', '2021-01-01', '2021-01-02', 'Concluída');
-
-    $this->insert_photo('https://via.placeholder.com/150', 1);
-    $this->insert_photo('https://via.placeholder.com/150', 1);
-  }
-
-  public function clear_all()
-  {
-    $this->drop_schema();
-    $this->create_schema();
-  }
-
   public function insert_project($name, $description, $start_date, $end_date, $status)
   {
     $this->insert('projects', [
@@ -320,7 +282,6 @@ class Spot_Lite_Database
       'status' => $status
     ]);
   }
-
 
 
   public function insert_report($project_id, $title, $general_event_description, $event_date, $author, $keywords_for_search)
@@ -369,5 +330,46 @@ class Spot_Lite_Database
     $table_name = self::get_table_name('reports');
     $sql = "SELECT * FROM $table_name WHERE MATCH(fulltext_search) AGAINST (%s IN NATURAL LANGUAGE MODE)";
     return $this->wpdb->get_results($this->wpdb->prepare($sql, $search));
+  }
+
+
+
+  /// DEVELOPMENT ONLY
+
+  public function populate()
+  {
+    $this->insert_project('Projeto 1', 'Descrição do projeto 1', '2021-01-01', '2021-12-31', 'Em andamento');
+    $this->insert_project('Projeto 2', 'Descrição do projeto 2', '2021-01-01', '2021-12-31', 'Em andamento');
+    $this->insert_project('Projeto 3', 'Descrição do projeto 3', '2021-01-01', '2021-12-31', 'Em andamento');
+    $this->insert_project('Projeto 4', 'Descrição do projeto 4', '2021-01-01', '2021-12-31', 'Em andamento');
+    $this->insert_project('Projeto 5', 'Descrição do projeto 5', '2021-01-01', '2021-12-31', 'Em andamento');
+    $this->insert_project('Projeto 6', 'Descrição do projeto 6', '2021-01-01', '2021-12-31', 'Em andamento');
+    $this->insert_project('Projeto 7', 'Descrição do projeto 7', '2021-01-01', '2021-12-31', 'Em andamento');
+    $this->insert_project('Projeto 8', 'Descrição do projeto 8', '2021-01-01', '2021-12-31', 'Em andamento');
+    $this->insert_project('Projeto 9', 'Descrição do projeto 9', '2021-01-01', '2021-12-31', 'Em andamento');
+    $this->insert_project('Projeto 10', 'Descrição do projeto 10', '2021-01-01', '2021-12-31', 'Em andamento');
+
+
+    $this->insert_participant('Participante 1', 20, 'Escola 1');
+    $this->insert_participant('Participante 2', 21, 'Escola 2');
+    $this->insert_participant('Participante 3', 22, 'Escola 3');
+
+
+    $this->insert_report(1, 'Relatório 1', 'Descrição do evento 1', '2021-01-01', 1, 'robos');
+    $this->insert_report(1, 'Relatório 2', 'Descrição do evento 2', '2021-01-01', 1, 'evento');
+    $this->insert_report(1, 'Relatório 3', 'Descrição do evento 3', '2021-01-01', 1, 'evento');
+
+    $this->insert_activity(1, 1, 'Atividade 1', '2021-01-01', '2021-01-02', 'Concluída');
+    $this->insert_activity(1, 1, 'Atividade 2', '2021-01-01', '2021-01-02', 'Concluída');
+    $this->insert_activity(1, 1, 'Atividade 3', '2021-01-01', '2021-01-02', 'Concluída');
+
+    $this->insert_photo('https://via.placeholder.com/150', 1);
+    $this->insert_photo('https://via.placeholder.com/150', 1);
+  }
+
+  public function clear_all()
+  {
+    $this->drop_schema();
+    $this->create_schema();
   }
 }
