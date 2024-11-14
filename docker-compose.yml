@@ -12,6 +12,9 @@ services:
     volumes:
       - wordpress:/var/www/html
       - ./spot-lite:/var/www/html/wp-content/plugins/spot-lite
+      - ./.grafana/log-files/error.log:/var/log/apache2/error.log
+      - ./.grafana/log-files/access.log:/var/log/apache2/access.log
+      - ./.grafana/log-files/other_vhosts_access.log:/var/log/apache2/other_vhosts_access.log
 
   db:
     image: mysql:8.0
@@ -33,6 +36,32 @@ services:
       PMA_HOST: db
       PMA_USER: user
       PMA_PASSWORD: pass
+
+  loki:
+    image: grafana/loki:3.0.0
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./.grafana/loki-config.yaml:/etc/loki/local-config.yaml
+
+  promtail:
+    image: grafana/promtail:3.0.0
+    volumes:
+      - ./.grafana/log-files:/log-files 
+      - ./.grafana/promtail-config.yaml:/etc/promtail/config.yaml
+    command: -config.file=/etc/promtail/config.yaml
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./.grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./.grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./.grafana/dashboards:/etc/grafana/provisioning/dashboards
+    depends_on:
+      - loki
 
 volumes:
   wordpress:

@@ -31,10 +31,8 @@ class Spot_Lite_Deactivator
 	 */
 	public static function deactivate()
 	{
-		if (defined('DEBUG_SPOT_LITE') && DEBUG_SPOT_LITE) {
-			error_log('Spot Lite deactivated');
-			self::clear_db();
-		}
+		spot_lite_log("Deactivating Spot Lite");
+		self::clear_db();
 	}
 
 

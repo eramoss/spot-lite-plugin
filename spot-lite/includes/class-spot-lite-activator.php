@@ -34,10 +34,8 @@ class Spot_Lite_Activator
 	{
 		self::init_database();
 
-		if (defined('DEBUG_SPOT_LITE') && DEBUG_SPOT_LITE) {
-			error_log('Spot Lite activated');
-			self::populate_database();
-		}
+		spot_lite_log('Spot Lite activated');
+		self::populate_database();
 	}
 
 	/**

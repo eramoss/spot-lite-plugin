@@ -37,6 +37,19 @@ define('SPOT_LITE_VERSION', '1.0.0');
 define('ROOT_PLUGIN_URI', plugin_dir_url(__FILE__));
 define('ROOT_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('DEBUG_SPOT_LITE', true);
+define('FLUENTD_URL', getenv('FLUENTD_URL'));
+
+function spot_lite_log($message, $level = 'INFO')
+{
+	if (defined('DEBUG_SPOT_LITE') && DEBUG_SPOT_LITE) {
+		$file_that_sended = debug_backtrace()[0]['file'];
+		$line_that_sended = debug_backtrace()[0]['line'];
+		$function_that_sended = debug_backtrace()[1]['function'];
+		$message = "[DEBUG_SPOT_LITE] [$level] $message - $file_that_sended:$line_that_sended:$function_that_sended";
+		error_log($message);
+	}
+}
+
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-spot-lite-activator.php
