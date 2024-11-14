@@ -28,9 +28,9 @@ docker compose up -d --build
 > Utilize o comando com -d para rodar em background. Os logs do projeto podem ser acessados em `http://localhost:3000`
 
 ### Acessos
-- O wordpress com o plugin pré instalado pode ser acessado em `http://localhost:8080`.Basta seguir o passo a passo de instalação padrão do wordpress.
+- O wordpress com o plugin pré instalado pode ser acessado em `http://localhost:8888`.Basta seguir o passo a passo de instalação padrão do wordpress.
 - O Banco de dados está desponivel com acesso no phpmyadmin em `http://localhost:8081`. Se prefirir, pode acessar o banco de dados diretamente com as credenciais descritas no arquivo `docker-compose.yml` nas variáveis de ambiente, eg. MYSQL_ROOT_PASSWORD, MYSQL_USER, MYSQL_PASSWORD.
-- Os Logs do projeto estão disponíveis em `http://localhost:3000`. Utilize as credenciais padrão `admin` e `admin` para acessar o grafana.
+- Os Logs do projeto estão disponíveis em `http://localhost:3000`. Se necessário utilize as credenciais padrão `admin` e `admin` para acessar o grafana.
 
 
 ## Estrutura do projeto

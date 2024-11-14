@@ -1,9 +1,10 @@
 services:
   wordpress:
     image: wordpress
+    container_name: spot-lite-plugin-wordpress
     restart: always
     ports:
-      - 8080:80
+      - 8888:80
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: user
@@ -51,6 +52,45 @@ services:
       - ./.grafana/log-files:/log-files 
       - ./.grafana/promtail-config.yaml:/etc/promtail/config.yaml
     command: -config.file=/etc/promtail/config.yaml
+
+  # prometheus:
+  #   image: prom/prometheus
+  #   volumes:
+  #     - ./.grafana/prometheus.yml:/etc/prometheus/prometheus.yml
+  #   command:
+  #     - '--config.file=/etc/prometheus/prometheus.yml'
+  #   ports:
+  #     - "9090:9090"
+      
+  # cadvisor:
+  #   image: gcr.io/cadvisor/cadvisor
+  #   container_name: cadvisor
+  #   ports:
+  #     - "8080:8080"
+  #   command:
+  #     - "--disable_metrics=disk,referenced_memory"
+  #     - "--enable_metrics=cpu,memory,network"
+  #   volumes:
+  #     - type: bind
+  #       source: /
+  #       target: /rootfs
+  #       read_only: true
+  #       bind:
+  #         propagation: rslave
+  #     - type: bind
+  #       source: /var/lib/docker/
+  #       target: /var/lib/docker
+  #       read_only: true
+  #       bind:
+  #         propagation: rslave
+  #     - type: bind
+  #       source: /var/run
+  #       target: /var/run
+  #       read_only: false
+  #     - type: bind
+  #       source: /sys
+  #       target: /sys
+  #       read_only: true
 
   grafana:
     image: grafana/grafana:latest

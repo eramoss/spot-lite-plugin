@@ -22,3 +22,6 @@ Estrutura inicial do projeto
 
 ### Modificado
 - configuração de logs do projeto com grafana e loki
+
+### Modificado 
+- configuração de monitoramento (comentada para ativar) usando grafana e prometheus.
