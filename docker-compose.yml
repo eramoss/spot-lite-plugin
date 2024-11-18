@@ -13,9 +13,7 @@ services:
     volumes:
       - wordpress:/var/www/html
       - ./spot-lite:/var/www/html/wp-content/plugins/spot-lite
-      - ./.grafana/log-files/error.log:/var/log/apache2/error.log
-      - ./.grafana/log-files/access.log:/var/log/apache2/access.log
-      - ./.grafana/log-files/other_vhosts_access.log:/var/log/apache2/other_vhosts_access.log
+      - ./.grafana/log-files:/var/log/apache2
 
   db:
     image: mysql:8.0
