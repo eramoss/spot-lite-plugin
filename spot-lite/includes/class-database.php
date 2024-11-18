@@ -268,7 +268,7 @@ class Spot_Lite_Database
     ");
 
     if ($index_exists == 0) {
-      $this->wpdb->query("CREATE FULLTEXT INDEX reports_fulltext_search_index ON $reports_table (fulltext_search)");
+      $this->wpdb->query("CREATE FULLTEXT INDEX reports_fulltext_search_index ON $reports_table (fulltext_search) WITH PARSER ngram");
     }
   }
 
