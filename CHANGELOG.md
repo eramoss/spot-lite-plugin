@@ -25,3 +25,12 @@ Estrutura inicial do projeto
 
 ### Modificado 
 - configuração de monitoramento (comentada para ativar) usando grafana e prometheus.
+
+### Modificado
+- melhoria na implementação da estrutura do banco de dados
+
+### Removido
+- indexes do banco de dados não usados ainda
+
+### Adicionado
+- Documentação da estrutura do banco de dados
