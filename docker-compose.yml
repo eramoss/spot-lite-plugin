@@ -18,6 +18,7 @@ services:
   db:
     image: mysql:8.0
     restart: always
+    container_name: spot-lite-plugin-db
     environment:
       MYSQL_DATABASE: database
       MYSQL_USER: user
@@ -29,6 +30,7 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     restart: always
+    container_name: spot-lite-plugin-phpmyadmin
     ports:
       - 8081:80
     environment:
@@ -38,6 +40,7 @@ services:
 
   loki:
     image: grafana/loki:3.0.0
+    container_name: loki
     ports:
       - "3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
@@ -46,20 +49,22 @@ services:
 
   promtail:
     image: grafana/promtail:3.0.0
+    container_name: promtail
     volumes:
-      - ./.grafana/log-files:/log-files 
+      - ./.grafana/log-files:/log-files
       - ./.grafana/promtail-config.yaml:/etc/promtail/config.yaml
     command: -config.file=/etc/promtail/config.yaml
 
   # prometheus:
   #   image: prom/prometheus
+  #   container_name: prometheus
   #   volumes:
   #     - ./.grafana/prometheus.yml:/etc/prometheus/prometheus.yml
   #   command:
   #     - '--config.file=/etc/prometheus/prometheus.yml'
   #   ports:
   #     - "9090:9090"
-      
+
   # cadvisor:
   #   image: gcr.io/cadvisor/cadvisor
   #   container_name: cadvisor
@@ -92,6 +97,7 @@ services:
 
   grafana:
     image: grafana/grafana:latest
+    container_name: grafana
     ports:
       - "3000:3000"
     volumes:
