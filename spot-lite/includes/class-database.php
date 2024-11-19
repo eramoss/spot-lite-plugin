@@ -226,23 +226,20 @@ class Spot_Lite_Database
     ]);
   }
 
-  public function insert_activity($report_id, $participant_id, $description, $start_date, $end_date, $status)
+  public function insert_activity($report_id, $participant_id, $description)
   {
     $this->insert('activities', [
       'report_id' => $report_id,
       'participant_id' => $participant_id,
       'description' => $description,
-      'start_date' => $start_date,
-      'end_date' => $end_date,
-      'status' => $status
     ]);
   }
 
-  public function insert_participant($name, $age, $school)
+  public function insert_participant($name, $birth_date, $school)
   {
     $this->insert('participants', [
       'name' => $name,
-      'age' => $age,
+      'birth_date' => $birth_date,
       'school' => $school
     ]);
   }
@@ -268,34 +265,50 @@ class Spot_Lite_Database
 
   public function populate()
   {
-    $this->insert_project('Projeto 1', 'Descrição do projeto 1', '2021-01-01', '2021-12-31', 'Em andamento');
-    $this->insert_project('Projeto 2', 'Descrição do projeto 2', '2021-01-01', '2021-12-31', 'Em andamento');
-    $this->insert_project('Projeto 3', 'Descrição do projeto 3', '2021-01-01', '2021-12-31', 'Em andamento');
-    $this->insert_project('Projeto 4', 'Descrição do projeto 4', '2021-01-01', '2021-12-31', 'Em andamento');
-    $this->insert_project('Projeto 5', 'Descrição do projeto 5', '2021-01-01', '2021-12-31', 'Em andamento');
-    $this->insert_project('Projeto 6', 'Descrição do projeto 6', '2021-01-01', '2021-12-31', 'Em andamento');
-    $this->insert_project('Projeto 7', 'Descrição do projeto 7', '2021-01-01', '2021-12-31', 'Em andamento');
-    $this->insert_project('Projeto 8', 'Descrição do projeto 8', '2021-01-01', '2021-12-31', 'Em andamento');
-    $this->insert_project('Projeto 9', 'Descrição do projeto 9', '2021-01-01', '2021-12-31', 'Em andamento');
-    $this->insert_project('Projeto 10', 'Descrição do projeto 10', '2021-01-01', '2021-12-31', 'Em andamento');
+    $faker = Faker\Factory::create('pt_BR');
 
+    for ($i = 1; $i <= 3; $i++) {
+      $this->insert_project(
+        $faker->name(),
+        $faker->sentence(6),
+        $faker->date('Y-m-d', '2021-01-01'),
+        $faker->date('Y-m-d', '2021-12-31'),
+        $faker->randomElement(['Em andamento', 'Concluído', 'Cancelado'])
+      );
+    }
 
-    $this->insert_participant('Participante 1', 20, 'Escola 1');
-    $this->insert_participant('Participante 2', 21, 'Escola 2');
-    $this->insert_participant('Participante 3', 22, 'Escola 3');
+    for ($i = 1; $i <= 3; $i++) {
+      $this->insert_participant(
+        $faker->name(),
+        $faker->date('Y-m-d', '2005-01-01'),
+        "Escola " . $faker->word
+      );
+    }
 
+    for ($i = 1; $i <= 10; $i++) {
+      $this->insert_report(
+        $faker->numberBetween(1, 3),
+        $faker->sentence(6),
+        $faker->paragraph(2),
+        $faker->date('Y-m-d', '2021-12-31'),
+        1,
+        $faker->randomElement(['marcenaria', 'robotica', 'programacao', 'eletronica', 'quimica', 'fisica', 'matematica', 'biologia', 'geografia', 'historia'])
+      );
+    }
 
-    $this->insert_report(1, 'Relatório 1', 'Descrição do evento 1', '2021-01-01', 1, 'robos');
-    $this->insert_report(1, 'Relatório 2', 'Descrição do evento 2', '2021-01-01', 1, 'evento');
-    $this->insert_report(1, 'Relatório 3', 'Descrição do evento 3', '2021-01-01', 1, 'evento');
+    for ($i = 1; $i <= 3; $i++) {
+      $this->insert_activity(
+        $faker->numberBetween(1, 10),
+        $faker->numberBetween(1, 3),
+        $faker->paragraph(2),
+      );
+    }
 
-    $this->insert_activity(1, 1, 'Atividade 1', '2021-01-01', '2021-01-02', 'Concluída');
-    $this->insert_activity(1, 1, 'Atividade 2', '2021-01-01', '2021-01-02', 'Concluída');
-    $this->insert_activity(1, 1, 'Atividade 3', '2021-01-01', '2021-01-02', 'Concluída');
-
-    $this->insert_photo('https://via.placeholder.com/150', 1);
-    $this->insert_photo('https://via.placeholder.com/150', 1);
+    for ($i = 1; $i <= 2; $i++) {
+      $this->insert_photo($faker->imageUrl(150, 150), $faker->numberBetween(1, 10));
+    }
   }
+
 
   public function clear_all()
   {

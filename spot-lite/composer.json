@@ -1,0 +1,20 @@
+{
+    "name": "lite/spot-lite",
+    "description": "Um criador de relatórios de atividades com inteligencia e automação.",
+    "type": "project",
+    "require-dev": {
+        "fakerphp/faker": "^1.24"
+    },
+    "license": "Apache2",
+    "autoload": {
+        "psr-4": {
+            "Lite\\SpotLite\\": "includes/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Lite Univali"
+        }
+    ],
+    "require": {}
+}
