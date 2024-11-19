@@ -99,59 +99,6 @@ class Spot_Lite_Database
     $this->wpdb->insert($table_name, $data);
   }
 
-
-  private function select_where($table_name, $fields = "*", $where = null)
-  {
-    $table_name = self::get_table_name($table_name);
-    $sql = "SELECT $fields FROM $table_name";
-    if ($where != null) {
-      $sql .= " WHERE $where";
-    }
-    return $this->wpdb->get_results($sql);
-  }
-
-  /**
-   * Initializes the main database schema for the Spot-Lite plugin upon activation.
-   * This activation hook is defined in includes/class-spot-lite-activator.php.
-   * 
-   * Schema Overview:
-   * Spot-Lite is a plugin designed to help manage and generate reports on projects.
-   * The primary entities are Projects, Reports, Activities, Participants, and Users.
-   * 
-   * - **Project**:
-   *   - A Project represents a managed activity or initiative.
-   *   - Each Project is associated with one or more Managers (WordPress users).
-   *   - Each Project can have multiple Reports documenting its progress.
-   *   - Attributes: `name`, `description`, `start_date`, `end_date`, `status`.
-   * 
-   * - **Report**:
-   *   - Each Report belongs to a single Project.
-   *   - Reports capture events or activities related to the Project.
-   *   - Attributes: `title`, `general_event_description`, `event_date`, `author`, `activities`, `photos` (optional), and `keywords_for_search` (optional).
-   *   - Each Report has an Author (WordPress user) and may contain multiple Activities.
-   * 
-   * - **Activity**:
-   *   - Activities are components within a Report, detailing specific actions or events.
-   *   - Each Activity includes a Participant, description, start date, end date, and status.
-   * 
-   * - **Participant**:
-   *   - Participants take part in Activities and have specific attributes.
-   *   - Attributes: `name`, `age`, `school` (optional).
-   * 
-   * - **User Roles**:
-   *   - Managers and Authors are WordPress users; no additional user tables are needed, as WordPress’s user management system is utilized.
-   * 
-   * - **Photos**:
-   *   - Photos are optional and can be stored as URLs in the database.
-   *   - Photos may be associated with either Reports or Activities.
-   * 
-   * In summary:
-   * - Projects are managed by Managers and documented through Reports.
-   * - Reports are authored by Users and contain Activities.
-   * - Activities detail specific events within a Report and involve Participants.
-   * 
-   * @since 1.0.0
-   */
   public function create_schema()
   {
     $this->create_table_if_not_exists('projects', [
@@ -168,7 +115,7 @@ class Spot_Lite_Database
     $this->create_table_if_not_exists('participants', [
       'id INT(11) NOT NULL AUTO_INCREMENT',
       'name VARCHAR(255) NOT NULL',
-      'age INT(11)',
+      'birth_date DATE',
       'school VARCHAR(255)',
       'PRIMARY KEY (id)'
     ]);
@@ -193,9 +140,6 @@ class Spot_Lite_Database
       'report_id INT(11) NOT NULL',
       'participant_id INT(11) NOT NULL',
       'description TEXT',
-      'start_date DATE',
-      'end_date DATE',
-      'status VARCHAR(50)',
       'PRIMARY KEY (id)',
       "FOREIGN KEY (report_id) REFERENCES $reports_table(id) ON DELETE CASCADE",
       "FOREIGN KEY (participant_id) REFERENCES $participants_table(id) ON DELETE CASCADE"
@@ -230,21 +174,7 @@ class Spot_Lite_Database
 
   private function indexes()
   {
-    $this->create_index('projects', 'projects_name_index', 'name');
-    $this->create_index('projects', 'projects_status_index', 'status');
-    $this->create_index('projects', 'projects_start_date_index', 'start_date');
 
-    $this->create_index('reports', 'reports_title_index', 'title');
-    $this->create_index('reports', 'reports_project_author_index', ['project_id', 'author']);
-
-    $this->create_index('activities', 'activities_report_id_index', 'report_id');
-    $this->create_index('activities', 'activities_participant_id_index', 'participant_id');
-
-    $this->create_index('participants', 'participants_name_index', 'name');
-    $this->create_index('participants', 'participants_age_index', 'age');
-    $this->create_index('participants', 'participants_school_index', 'school');
-
-    $this->create_index('photos', 'photos_report_id_index', 'report_id');
   }
 
   private function create_full_text_search()
