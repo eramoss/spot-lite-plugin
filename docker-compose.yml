@@ -26,6 +26,7 @@ services:
       MYSQL_RANDOM_ROOT_PASSWORD: '1'
     volumes:
       - db:/var/lib/mysql
+      - ./db/init.cnf:/etc/mysql/conf.d/init.cnf
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
