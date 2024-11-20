@@ -16,20 +16,4 @@ spot_lite_log('Spot Lite activated');
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 
-<?php
-
-require_once plugin_dir_path(__DIR__) . '../includes/class-spot-lite-custom-tables.php';
-
-$list_table = new Spot_Lite_Reports_Table();
-$list_table->prepare_items();
-
-?>
-
-<div class="wrap">
-    <h1 class="wp-heading-inline">Relatórios</h1>
-    <form method="post">
-        <?php
-        $list_table->display();
-        ?>
-    </form>
-</div>
+<h1>Análises</h1>

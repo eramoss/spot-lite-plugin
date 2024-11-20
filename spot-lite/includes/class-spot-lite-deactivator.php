@@ -33,6 +33,7 @@ class Spot_Lite_Deactivator
 	{
 		spot_lite_log("Deactivating Spot Lite");
 		self::clear_db();
+		self::remove_author_role();
 	}
 
 
@@ -42,4 +43,10 @@ class Spot_Lite_Deactivator
 		$database = Spot_Lite_Database::get_instance();
 		$database->clear_all();
 	}
+
+	private static function remove_author_role()
+	{
+		remove_role('spot_lite_author');
+	}
+
 }

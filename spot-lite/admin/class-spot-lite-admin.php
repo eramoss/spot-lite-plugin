@@ -75,16 +75,70 @@ class Spot_Lite_Admin
 		wp_enqueue_script($this->Spot_Lite, plugin_dir_url(__FILE__) . 'js/spot-lite-admin.js', array('jquery'), $this->version, false);
 	}
 
-	public function add_plugin_admin_menu()
+	public function add_admin_menu()
 	{
+		
+		$topmenu_slug = plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-display.php';
+		$submenu_slug_projetos = plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-projects.php';
+		$submenu_slug_adicionar_relatorio = plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-add-report.php';
+		$submenu_slug_configuracoes = plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-settings.php';
+		$submenu_slug_analises = plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-analysis.php';
+
 		add_menu_page(
 			'Spot Lite',
-			'Regitros',
-			'manage_options',
-			plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-display.php',
+			'SpotLite',
+			'spot_lite_pass',
+			$topmenu_slug,
 			null,
-			ROOT_PLUGIN_URI . 'public/img/icon-light.png',
+			ROOT_PLUGIN_URI . 'public/img/spot-lite-icon.png',
 			6
 		);
+
+		add_submenu_page(
+			$topmenu_slug,
+			'Spot Lite - Registros',
+			'Registros',
+			'spot_lite_pass',
+			$topmenu_slug,
+			null
+		);
+
+		add_submenu_page(
+			$topmenu_slug,
+			'Spot Lite - Projetos',
+			'Projetos',
+			'spot_lite_pass',
+			$submenu_slug_projetos,
+			null
+		);
+
+		add_submenu_page(
+			$topmenu_slug,
+			'Spot Lite - Adicionar Relatório',
+			'Adicionar Relatório',
+			'spot_lite_pass',
+			$submenu_slug_adicionar_relatorio,
+			null			
+		);
+
+		add_submenu_page(
+			$topmenu_slug,
+			'Spot Lite - Análises',
+			'Análises',
+			'spot_lite_pass',
+			$submenu_slug_analises,
+			null			
+		);
+
+		add_submenu_page(
+			$topmenu_slug,
+			'Spot Lite - Configurações',
+			'Configurações',
+			'spot_lite_pass',
+			$submenu_slug_configuracoes,
+			null			
+		);
+
 	}
+
 }

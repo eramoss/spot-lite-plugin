@@ -36,6 +36,8 @@ class Spot_Lite_Activator
 
 		spot_lite_log('Spot Lite activated');
 		self::populate_database();
+		self::create_author_role();
+
 	}
 
 	/**
@@ -67,5 +69,28 @@ class Spot_Lite_Activator
 		$database = Spot_Lite_Database::get_instance();
 		$database->populate();
 	}
+
+	/**
+	 * Create the Author role for Spot Lite plugin.
+	 *
+	 * This function is fired during plugin activation.
+	 * It creates a role to write reports i.e. relatórios.
+	 *
+	 * @since    1.0.0
+	 */
+	private static function create_author_role()
+	{
+		add_role(
+			'spot_lite_author', 
+			'Spot Lite Autor', 
+			[
+				'read' => true,
+				'spot_lite_pass' => true
+			]
+		);
+
+		$admin_role = get_role('administrator');
+    	$admin_role->add_cap('spot_lite_pass');
+	}	
 
 }
