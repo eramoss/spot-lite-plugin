@@ -276,16 +276,16 @@ class Spot_Lite_Database
   public function get_reports($args = [])
   {
     $table_name = self::get_table_name('reports');
-    if (isset($args['fields'])) {
-      $fields = implode(", ", $args['fields']);
-      $sql = "SELECT $fields FROM $table_name";
-    } else {
-      $sql = "SELECT * FROM $table_name";
-    }
+    $fields = isset($args['fields']) ? implode(", ", $args['fields']) : "*";
+    $sql = "SELECT $fields FROM $table_name";
+
     if (isset($args['per_page']) && isset($args['current_page'])) {
-      $sql .= " LIMIT %d OFFSET %d";
-      $sql = $this->wpdb->prepare($sql, $args['per_page'], ($args['current_page'] - 1) * $args['per_page']);
+      $limit = $this->wpdb->prepare("%d", $args['per_page']);
+      $offset = $this->wpdb->prepare("%d", ($args["current_page"] - 1) * $args["per_page"]);
+      $sql .= " LIMIT $limit OFFSET $offset";
+
       $data = $this->wpdb->get_results($sql);
+
       $total_items = $this->wpdb->get_var("SELECT COUNT(*) FROM $table_name");
       return ['data' => $data, 'total_items' => $total_items];
     }
@@ -317,16 +317,20 @@ class Spot_Lite_Database
     $table_name = self::get_table_name('reports');
     $fields = isset($args['fields']) ? implode(", ", $args['fields']) : "*";
     $sql = "SELECT $fields FROM $table_name WHERE MATCH(fulltext_search) AGAINST (%s IN NATURAL LANGUAGE MODE)";
+    $sql = $this->wpdb->prepare($sql, $search);
+
     if (isset($args['per_page']) && isset($args['current_page'])) {
-      $sql .= " LIMIT %d OFFSET %d";
-      $sql = $this->wpdb->prepare($sql, $search, $args['per_page'], ($args['current_page'] - 1) * $args['per_page']);
+      $limit = $this->wpdb->prepare("%d", $args['per_page']);
+      $offset = $this->wpdb->prepare("%d", ($args["current_page"] - 1) * $args["per_page"]);
+
+      $sql .= " LIMIT $limit OFFSET $offset";
+
       $data = $this->wpdb->get_results($sql);
       $total_items = $this->wpdb->get_var("SELECT COUNT(*) FROM $table_name WHERE MATCH(fulltext_search) AGAINST (%s IN NATURAL LANGUAGE MODE)", $search);
-      spot_lite_log($sql);
       return ['data' => $data, 'total_items' => $total_items];
     }
 
-    return $this->wpdb->get_results($this->wpdb->prepare($sql, $search));
+    return $this->wpdb->get_results($sql);
   }
 
 
