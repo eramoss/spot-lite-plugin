@@ -36,13 +36,13 @@ class Spot_Lite_Database
     return self::$instance;
   }
 
-  static public function get_table_name($table_name)
+  static public function get_table_name(TableName $table_name)
   {
     global $wpdb;
-    return $wpdb->prefix . "spot_lite_" . $table_name;
+    return $wpdb->prefix . "spot_lite_" . $table_name->value;
   }
 
-  protected function create_table_if_not_exists($table_name, $fields)
+  protected function create_table_if_not_exists(TableName $table_name, $fields)
   {
     $table_name = self::get_table_name($table_name);
     $charset_collate = $this->wpdb->get_charset_collate();
@@ -58,13 +58,13 @@ class Spot_Lite_Database
     dbDelta($sql);
   }
 
-  private function drop_table_if_exists($table_name)
+  private function drop_table_if_exists(TableName $table_name)
   {
     $table_name = self::get_table_name($table_name);
     $this->wpdb->query("DROP TABLE IF EXISTS $table_name");
   }
 
-  private function create_index($table_name, $index_name, $fields)
+  private function create_index(TableName $table_name, $index_name, $fields)
   {
     $table_name = self::get_table_name($table_name);
     $index_name = $table_name . "_" . $index_name;
@@ -93,7 +93,7 @@ class Spot_Lite_Database
     }
   }
 
-  private function insert($table_name, $data)
+  private function insert(TableName $table_name, $data)
   {
     $table_name = self::get_table_name($table_name);
     $this->wpdb->insert($table_name, $data);
@@ -101,7 +101,7 @@ class Spot_Lite_Database
 
   public function create_schema()
   {
-    $this->create_table_if_not_exists('projects', [
+    $this->create_table_if_not_exists(TableName::PROJECTS, [
       'id INT(11) NOT NULL AUTO_INCREMENT',
       'name VARCHAR(255) NOT NULL',
       'description TEXT',
@@ -110,18 +110,18 @@ class Spot_Lite_Database
       'status VARCHAR(50)',
       'PRIMARY KEY (id)'
     ]);
-    $projects_table = self::get_table_name('projects');
+    $projects_table = self::get_table_name(TableName::PROJECTS);
 
-    $this->create_table_if_not_exists('participants', [
+    $this->create_table_if_not_exists(TableName::PARTICIPANTS, [
       'id INT(11) NOT NULL AUTO_INCREMENT',
       'name VARCHAR(255) NOT NULL',
       'birth_date DATE',
       'school VARCHAR(255)',
       'PRIMARY KEY (id)'
     ]);
-    $participants_table = self::get_table_name('participants');
+    $participants_table = self::get_table_name(TableName::PARTICIPANTS);
 
-    $this->create_table_if_not_exists('reports', [
+    $this->create_table_if_not_exists(TableName::REPORTS, [
       'id INT(11) NOT NULL AUTO_INCREMENT',
       'project_id INT(11) NOT NULL',
       'title VARCHAR(255) NOT NULL',
@@ -133,9 +133,9 @@ class Spot_Lite_Database
       "FOREIGN KEY (project_id) REFERENCES $projects_table (id) ON DELETE CASCADE",
       'FOREIGN KEY (author) REFERENCES wp_users(ID) ON DELETE SET NULL'
     ]);
-    $reports_table = self::get_table_name('reports');
+    $reports_table = self::get_table_name(TableName::REPORTS);
 
-    $this->create_table_if_not_exists('activities', [
+    $this->create_table_if_not_exists(TableName::ACTIVITIES, [
       'id INT(11) NOT NULL AUTO_INCREMENT',
       'report_id INT(11) NOT NULL',
       'participant_id INT(11) NOT NULL',
@@ -145,7 +145,7 @@ class Spot_Lite_Database
       "FOREIGN KEY (participant_id) REFERENCES $participants_table(id) ON DELETE CASCADE"
     ]);
 
-    $this->create_table_if_not_exists('photos', [
+    $this->create_table_if_not_exists(TableName::PHOTOS, [
       'id INT(11) NOT NULL AUTO_INCREMENT',
       'url TEXT',
       'report_id INT(11) NOT NULL',
@@ -165,11 +165,11 @@ class Spot_Lite_Database
    */
   public function drop_schema()
   {
-    $this->drop_table_if_exists('photos');
-    $this->drop_table_if_exists('activities');
-    $this->drop_table_if_exists('reports');
-    $this->drop_table_if_exists('participants');
-    $this->drop_table_if_exists('projects');
+    $this->drop_table_if_exists(TableName::PHOTOS);
+    $this->drop_table_if_exists(TableName::ACTIVITIES);
+    $this->drop_table_if_exists(TableName::REPORTS);
+    $this->drop_table_if_exists(TableName::PARTICIPANTS);
+    $this->drop_table_if_exists(TableName::PROJECTS);
   }
 
   private function indexes()
@@ -179,7 +179,7 @@ class Spot_Lite_Database
 
   private function create_full_text_search()
   {
-    $reports_table = self::get_table_name('reports');
+    $reports_table = self::get_table_name(TableName::REPORTS);
     $column_exists = $this->wpdb->get_var("
       SELECT COUNT(*) 
       FROM information_schema.columns 
@@ -204,19 +204,22 @@ class Spot_Lite_Database
 
   public function insert_project($name, $description, $start_date, $end_date, $status)
   {
-    $this->insert('projects', [
-      'name' => $name,
-      'description' => $description,
-      'start_date' => $start_date,
-      'end_date' => $end_date,
-      'status' => $status
-    ]);
+    $this->insert(
+      TableName::PROJECTS,
+      [
+        'name' => $name,
+        'description' => $description,
+        'start_date' => $start_date,
+        'end_date' => $end_date,
+        'status' => $status
+      ]
+    );
   }
 
 
   public function insert_report($project_id, $title, $general_event_description, $event_date, $author, $keywords_for_search)
   {
-    $this->insert('reports', [
+    $this->insert(TableName::REPORTS, [
       'project_id' => $project_id,
       'title' => $title,
       'general_event_description' => $general_event_description,
@@ -228,7 +231,7 @@ class Spot_Lite_Database
 
   public function insert_activity($report_id, $participant_id, $description)
   {
-    $this->insert('activities', [
+    $this->insert(TableName::ACTIVITIES, [
       'report_id' => $report_id,
       'participant_id' => $participant_id,
       'description' => $description,
@@ -237,7 +240,7 @@ class Spot_Lite_Database
 
   public function insert_participant($name, $birth_date, $school)
   {
-    $this->insert('participants', [
+    $this->insert(TableName::PARTICIPANTS, [
       'name' => $name,
       'birth_date' => $birth_date,
       'school' => $school
@@ -246,7 +249,7 @@ class Spot_Lite_Database
 
   public function insert_photo($url, $report_id)
   {
-    $this->insert('photos', [
+    $this->insert(TableName::PHOTOS, [
       'url' => $url,
       'report_id' => $report_id
     ]);
@@ -254,9 +257,11 @@ class Spot_Lite_Database
 
 
   /**
-   * Get all reports from the database
+   * Get all values of a table from the database
    * (Optional) Paginate the results
    * (Optional) Select fields
+   * 
+   * @param TableName $table_name The table name
    * 
    * @param array $args Optional arguments
    * Array with the following keys:
@@ -269,13 +274,13 @@ class Spot_Lite_Database
    * 
    * @example 
    * $db = Spot_Lite_Database::get_instance();
-   * $data = $db->get_reports(['per_page' => 10, 'current_page' => 1, 'fields' => ['id', 'title']]);
+   * $data = $db->get_on_table(TableName::REPORTS,['per_page' => 10, 'current_page' => 1, 'fields' => ['id', 'title']]);
    * 
    * @since    1.0.0
    */
-  public function get_reports($args = [])
+  public function get_on_table(TableName $table_name, $args = [])
   {
-    $table_name = self::get_table_name('reports');
+    $table_name = self::get_table_name($table_name);
     $fields = isset($args['fields']) ? implode(", ", $args['fields']) : "*";
     $sql = "SELECT $fields FROM $table_name";
 
@@ -314,7 +319,7 @@ class Spot_Lite_Database
    */
   public function full_text_search_reports($search, $args = [])
   {
-    $table_name = self::get_table_name('reports');
+    $table_name = self::get_table_name(TableName::REPORTS);
     $fields = isset($args['fields']) ? implode(", ", $args['fields']) : "*";
     $sql = "SELECT $fields FROM $table_name WHERE MATCH(fulltext_search) AGAINST (%s IN NATURAL LANGUAGE MODE)";
     $sql = $this->wpdb->prepare($sql, $search);
@@ -397,4 +402,13 @@ class Spot_Lite_Database
     $this->drop_schema();
     $this->create_schema();
   }
+}
+
+enum TableName: string
+{
+  case PROJECTS = "projects";
+  case REPORTS = "reports";
+  case ACTIVITIES = "activities";
+  case PARTICIPANTS = "participants";
+  case PHOTOS = "photos";
 }

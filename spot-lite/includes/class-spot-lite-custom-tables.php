@@ -6,7 +6,7 @@ if (!class_exists('WP_List_Table')) {
 class Spot_Lite_Reports_Table extends WP_List_Table
 {
 
-    private $db;
+    private Spot_Lite_Database $db;
     public function __construct($args = array())
     {
         parent::__construct($args);
@@ -47,7 +47,7 @@ class Spot_Lite_Reports_Table extends WP_List_Table
         if (isset($_POST['s']) && strlen($_POST['s']) >= 3) {
             $res = $this->db->full_text_search_reports($_POST['s'], compact('per_page', 'current_page', 'fields'));
         } else {
-            $res = $this->db->get_reports(compact('per_page', 'current_page', 'fields'));
+            $res = $this->db->get_on_table(TableName::REPORTS, compact('per_page', 'current_page', 'fields'));
         }
 
         $data = $res['data'];
