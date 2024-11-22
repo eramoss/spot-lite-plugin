@@ -41,6 +41,9 @@ define('FLUENTD_URL', getenv('FLUENTD_URL'));
 
 function spot_lite_log($message, $level = 'INFO')
 {
+	if (is_array($message) || is_object($message)) {
+		$message = json_encode($message);
+	}
 	if (defined('DEBUG_SPOT_LITE') && DEBUG_SPOT_LITE) {
 		$file_that_sended = debug_backtrace()[0]['file'];
 		$line_that_sended = debug_backtrace()[0]['line'];
