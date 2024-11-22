@@ -60,7 +60,9 @@ class Spot_Lite_Reports_Table extends WP_List_Table
         ]);
 
         $this->items = array_map(function ($item) {
-            return (array) $item;
+            $item = (array) $item;
+            $item['author'] = $this->db->get_author_display_name($item['author']);
+            return $item;
         }, $data);
     }
 

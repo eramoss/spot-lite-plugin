@@ -333,7 +333,15 @@ class Spot_Lite_Database
     return $this->wpdb->get_results($sql);
   }
 
-
+  public function get_author_display_name(int|string $author_id): string
+  {
+    $author_id = (int) $author_id;
+    $author = get_user_by('ID', $author_id);
+    if (!$author) {
+      spot_lite_log("Author not found: $author_id");
+    }
+    return $author->display_name;
+  }
 
   /// DEVELOPMENT ONLY
 
