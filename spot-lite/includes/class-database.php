@@ -348,6 +348,13 @@ class Spot_Lite_Database
     return $author->display_name;
   }
 
+  public function delete_reports(array $ids): void
+  {
+    $table_name = self::get_table_name(TableName::REPORTS);
+    $sql = "DELETE FROM $table_name WHERE id IN (" . implode(",", $ids) . ")";
+    $this->wpdb->query($sql);
+  }
+
   /// DEVELOPMENT ONLY
 
   public function populate()

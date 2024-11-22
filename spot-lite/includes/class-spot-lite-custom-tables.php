@@ -29,6 +29,14 @@ class Spot_Lite_Reports_Table extends WP_List_Table
         ];
     }
 
+    function get_bulk_actions()
+    {
+        return [
+            'delete' => 'Deletar',
+            'export' => 'Exportar',
+        ];
+    }
+
     // Retorna os itens para exibir
     function prepare_items()
     {
@@ -75,6 +83,28 @@ class Spot_Lite_Reports_Table extends WP_List_Table
     // Checkbox para ações em massa
     function column_cb($item)
     {
-        return sprintf('<input type="checkbox" name="id[]" value="%s" />', $item['id']);
+        return sprintf('
+            <div class="d-flex align-items-center pb-2">
+                <input type="checkbox" name="id[]" value="%s" />
+                <a href="%s" class="px-4"><i class="dashicons dashicons-edit"></i></a>
+        ', $item['id'], $this->get_edit_link($item));
     }
+
+    function handle_bulk_actions()
+    {
+        if ('delete' === $this->current_action()) {
+            $ids = isset($_REQUEST['id']) ? $_REQUEST['id'] : [];
+            $this->db->delete_reports($ids);
+        }
+        if ('export' === $this->current_action()) {
+            $ids = isset($_REQUEST['id']) ? $_REQUEST['id'] : [];
+            spot_lite_log("exporting pdf for ids: " . json_encode($ids));
+        }
+    }
+
+    function get_edit_link($item)
+    {
+        return admin_url("admin.php?page=spot-lite/admin/partials/plugin-spot-lite-add-report.php&id={$item['id']}");
+    }
+
 }

@@ -9,7 +9,7 @@
   padding-top: 6px;
 }
 
-#toplevel_page_spot-lite-admin-partials-plugin-spot-lite-display>a.wp-has-current-submenu>div:nth-child(2)>img:nth-child(1){
+#toplevel_page_spot-lite-admin-partials-plugin-spot-lite-display>a.wp-has-current-submenu>div:nth-child(2)>img:nth-child(1) {
   filter: saturate(1);
   width: 1.6em;
   padding-top: 6px;

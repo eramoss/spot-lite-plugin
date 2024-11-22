@@ -63,6 +63,9 @@ class Spot_Lite_Admin
 	public function enqueue_styles()
 	{
 		wp_enqueue_style($this->Spot_Lite, plugin_dir_url(__FILE__) . 'css/spot-lite-admin.css', array(), $this->version, 'all');
+
+		wp_register_style('prefix_bootstrap', '//cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
+		wp_enqueue_style('prefix_bootstrap');
 	}
 
 	/**
@@ -73,6 +76,9 @@ class Spot_Lite_Admin
 	public function enqueue_scripts()
 	{
 		wp_enqueue_script($this->Spot_Lite, plugin_dir_url(__FILE__) . 'js/spot-lite-admin.js', array('jquery'), $this->version, false);
+
+		wp_register_script('prefix_bootstrap', '//cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js');
+		wp_enqueue_script('prefix_bootstrap');
 	}
 
 	public function add_admin_menu()
