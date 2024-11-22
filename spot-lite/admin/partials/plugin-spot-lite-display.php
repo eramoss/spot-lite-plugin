@@ -51,4 +51,20 @@ echo '';
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 
-<h1>alooo</h1>
+<?php
+
+require_once plugin_dir_path(__DIR__) . '../includes/class-spot-lite-custom-tables.php';
+
+$list_table = new Spot_Lite_Reports_Table();
+$list_table->prepare_items();
+
+?>
+
+<div class="wrap">
+    <h1 class="wp-heading-inline">Relatórios</h1>
+    <form method="post">
+        <?php
+        $list_table->display();
+        ?>
+    </form>
+</div>
