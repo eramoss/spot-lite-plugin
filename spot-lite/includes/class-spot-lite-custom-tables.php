@@ -46,7 +46,6 @@ class Spot_Lite_Reports_Table extends WP_List_Table
         $fields = array_keys($columns);
         if (isset($_POST['s']) && strlen($_POST['s']) >= 3) {
             $res = $this->db->full_text_search_reports($_POST['s'], compact('per_page', 'current_page', 'fields'));
-            spot_lite_log($res);
         } else {
             $res = $this->db->get_reports(compact('per_page', 'current_page', 'fields'));
         }
