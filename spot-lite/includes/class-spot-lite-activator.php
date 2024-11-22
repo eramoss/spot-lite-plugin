@@ -81,8 +81,8 @@ class Spot_Lite_Activator
 	private static function create_author_role()
 	{
 		add_role(
-			'spot_lite_author', 
-			'Spot Lite Autor', 
+			'spot_lite_author',
+			'Spot Lite Autor',
 			[
 				'read' => true,
 				'spot_lite_pass' => true
@@ -90,7 +90,7 @@ class Spot_Lite_Activator
 		);
 
 		$admin_role = get_role('administrator');
-    	$admin_role->add_cap('spot_lite_pass');
-	}	
+		$admin_role->add_cap('spot_lite_pass');
+	}
 
 }

@@ -77,7 +77,7 @@ class Spot_Lite_Admin
 
 	public function add_admin_menu()
 	{
-		
+
 		$topmenu_slug = plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-display.php';
 		$submenu_slug_projetos = plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-projects.php';
 		$submenu_slug_adicionar_relatorio = plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-add-report.php';
@@ -118,7 +118,7 @@ class Spot_Lite_Admin
 			'Adicionar Relatório',
 			'spot_lite_pass',
 			$submenu_slug_adicionar_relatorio,
-			null			
+			null
 		);
 
 		add_submenu_page(
@@ -127,7 +127,7 @@ class Spot_Lite_Admin
 			'Análises',
 			'spot_lite_pass',
 			$submenu_slug_analises,
-			null			
+			null
 		);
 
 		add_submenu_page(
@@ -136,7 +136,7 @@ class Spot_Lite_Admin
 			'Configurações',
 			'spot_lite_pass',
 			$submenu_slug_configuracoes,
-			null			
+			null
 		);
 
 	}
