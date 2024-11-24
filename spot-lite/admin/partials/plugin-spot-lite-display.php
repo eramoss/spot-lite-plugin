@@ -24,7 +24,7 @@ $list_table->handle_bulk_actions();
 $list_table->prepare_items();
 
 
-$add_path = 'spot-lite/admin/partials/plugin-spot-lite-add-report.php';
+$add_path = 'spot-lite/admin/partials/plugin-spot-lite-add-edit-report.php';
 
 ?>
 <div class="wrap">

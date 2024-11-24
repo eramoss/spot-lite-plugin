@@ -76,7 +76,7 @@ class Spot_Lite_Admin
 	public function enqueue_scripts()
 	{
 		wp_enqueue_script($this->Spot_Lite, plugin_dir_url(__FILE__) . 'js/spot-lite-admin.js', array('jquery'), $this->version, false);
-
+		wp_enqueue_media();
 		wp_register_script('prefix_bootstrap', '//cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js');
 		wp_enqueue_script('prefix_bootstrap');
 	}
@@ -86,7 +86,7 @@ class Spot_Lite_Admin
 
 		$topmenu_slug = plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-display.php';
 		$submenu_slug_projetos = plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-projects.php';
-		$submenu_slug_adicionar_relatorio = plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-add-report.php';
+		$submenu_slug_adicionar_relatorio = plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-add-edit-report.php';
 		$submenu_slug_configuracoes = plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-settings.php';
 		$submenu_slug_analises = plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-analysis.php';
 

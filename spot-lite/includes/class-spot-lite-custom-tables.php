@@ -104,7 +104,7 @@ class Spot_Lite_Reports_Table extends WP_List_Table
 
     function get_edit_link($item)
     {
-        return admin_url("admin.php?page=spot-lite/admin/partials/plugin-spot-lite-add-report.php&id={$item['id']}");
+        return admin_url("admin.php?page=spot-lite/admin/partials/plugin-spot-lite-add-edit-report.php&id={$item['id']}");
     }
 
 }

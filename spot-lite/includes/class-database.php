@@ -96,7 +96,7 @@ class Spot_Lite_Database
   private function insert(TableName $table_name, $data)
   {
     $table_name = self::get_table_name($table_name);
-    $this->wpdb->insert($table_name, $data);
+    return $this->wpdb->insert($table_name, $data);
   }
 
   public function create_schema()
@@ -219,7 +219,7 @@ class Spot_Lite_Database
 
   public function insert_report($project_id, $title, $general_event_description, $event_date, $author, $keywords_for_search)
   {
-    $this->insert(TableName::REPORTS, [
+    return $this->insert(TableName::REPORTS, [
       'project_id' => $project_id,
       'title' => $title,
       'general_event_description' => $general_event_description,
@@ -238,9 +238,82 @@ class Spot_Lite_Database
     ]);
   }
 
+  public function update_activities($report_id, $activities)
+  {
+    $this->delete_all_activities($report_id);
+
+    $sql = '
+    INSERT INTO ' . self::get_table_name(TableName::ACTIVITIES) . ' (report_id, participant_id, description)
+    VALUES ';
+
+    $placeholders = [];
+    $params = [];
+    foreach ($activities as $activity) {
+      spot_lite_log("thatsh eeeeere: " . $activity);
+      $placeholders[] = '(%d, %d, %s)';
+      $params[] = $report_id;
+      $params[] = $activity['participant_id'];
+      $params[] = $activity['description'];
+    }
+
+
+    $sql .= implode(', ', $placeholders);
+
+    $prepared = $this->wpdb->prepare($sql, $params);
+    return $this->wpdb->query($prepared);
+  }
+
+  public function exists_or_create_participant($name, $birth_date, $school)
+  {
+    $exists = $this->exists_participant($name);
+    if ($exists) {
+      $sql = 'UPDATE ' . self::get_table_name(TableName::PARTICIPANTS) . ' SET birth_date = %s, school = %s WHERE name = %s';
+      $this->wpdb->query($this->wpdb->prepare($sql, $birth_date, $school, $name));
+      return $exists;
+    }
+    $sql = 'INSERT INTO ' . self::get_table_name(TableName::PARTICIPANTS) . ' (name, birth_date, school) VALUES (%s, %s, %s)';
+    $id = $this->insert_participant($name, $birth_date, $school);
+    return $id;
+  }
+
+  public function exists_participant($name)
+  {
+    $table_name = self::get_table_name(TableName::PARTICIPANTS);
+    $sql = "SELECT id FROM $table_name WHERE name = %s";
+    $sql = $this->wpdb->prepare($sql, $name);
+    return $this->wpdb->get_var($sql);
+  }
+
+  public function delete_all_activities($report_id)
+  {
+    $this->wpdb->delete(self::get_table_name(TableName::ACTIVITIES), ['report_id' => $report_id]);
+  }
+
+  public function update_photos($report_id, $photos)
+  {
+    $this->delete_all_photos($report_id);
+    $sql = 'INSERT INTO ' . self::get_table_name(TableName::PHOTOS) . ' (report_id, url) VALUES ';
+
+    $placeholders = [];
+    $params = [];
+    foreach ($photos as $photo) {
+      $placeholders[] = '(%d, %s)';
+      $params[] = $report_id;
+      $params[] = $photo['url'];
+    }
+    $sql .= implode(', ', $placeholders);
+    $prepared = $this->wpdb->prepare($sql, $params);
+    return $this->wpdb->query($prepared);
+  }
+
+  public function delete_all_photos($report_id)
+  {
+    $this->wpdb->delete(self::get_table_name(TableName::PHOTOS), ['report_id' => $report_id]);
+  }
+
   public function insert_participant($name, $birth_date, $school)
   {
-    $this->insert(TableName::PARTICIPANTS, [
+    return $this->insert(TableName::PARTICIPANTS, [
       'name' => $name,
       'birth_date' => $birth_date,
       'school' => $school
@@ -268,6 +341,7 @@ class Spot_Lite_Database
    * - per_page: Number of items per page
    * - current_page: Current page
    * - fields: Array with the fields to select
+   * - mode (optional): ARRAY_A, ARRAY_N, OBJECT, OBJECT_K, ARRAY_A | ARRAY_N, ARRAY_N | OBJECT, ARRAY_A | OBJECT, ARRAY_N | OBJECT, ARRAY_A | ARRAY_N | OBJECT
    * 
    * @return array Array with the reports
    * (if paginated, a count of the total items will be returned in the 'total_items' key)
@@ -283,18 +357,18 @@ class Spot_Lite_Database
     $table_name = self::get_table_name($table_name);
     $fields = isset($args['fields']) ? implode(", ", $args['fields']) : "*";
     $sql = "SELECT $fields FROM $table_name";
-
+    $mode = isset($args['mode']) ? $args['mode'] : OBJECT;
     if (isset($args['per_page']) && isset($args['current_page'])) {
       $limit = $this->wpdb->prepare("%d", $args['per_page']);
       $offset = $this->wpdb->prepare("%d", ($args["current_page"] - 1) * $args["per_page"]);
       $sql .= " LIMIT $limit OFFSET $offset";
 
-      $data = $this->wpdb->get_results($sql);
+      $data = $this->wpdb->get_results($sql, $mode);
 
       $total_items = $this->wpdb->get_var("SELECT COUNT(*) FROM $table_name");
       return ['data' => $data, 'total_items' => $total_items];
     }
-    return $this->wpdb->get_results($sql);
+    return $this->wpdb->get_results($sql, $mode);
   }
 
 
@@ -336,6 +410,50 @@ class Spot_Lite_Database
     }
 
     return $this->wpdb->get_results($sql);
+  }
+
+  public function get_report_by_id($id, $args = [])
+  {
+    $table_name = self::get_table_name(TableName::REPORTS);
+    $fields = isset($args['fields']) ? implode(', ', $args['fields']) : '*';
+    $mode = isset($args['mode']) ? $args['mode'] : OBJECT;
+    $sql = 'SELECT ' . $fields . ' FROM ' . $table_name . ' WHERE id = %d';
+    $sql = $this->wpdb->prepare($sql, $id);
+    return $this->wpdb->get_row($sql, $mode);
+  }
+
+  public function update_report_by_id($id, $args = [])
+  {
+    $table_name = self::get_table_name(TableName::REPORTS);
+    $this->wpdb->update($table_name, $args, ['id' => $id]);
+  }
+
+  public function get_activities_by_report_id($report_id, $args = [])
+  {
+    $table_name = self::get_table_name(TableName::ACTIVITIES);
+    $mode = isset($args['mode']) ? $args['mode'] : OBJECT;
+    $sql = "SELECT * FROM $table_name WHERE report_id = %d";
+    $sql = $this->wpdb->prepare($sql, $report_id);
+    return $this->wpdb->get_results($sql, $mode);
+  }
+
+  public function get_photos_by_report_id($report_id, $args = [])
+  {
+    $table_name = self::get_table_name(TableName::PHOTOS);
+    $mode = isset($args["mode"]) ? $args["mode"] : OBJECT;
+    $sql = "SELECT * FROM $table_name WHERE report_id = %d";
+    $sql = $this->wpdb->prepare($sql, $report_id);
+    return $this->wpdb->get_results($sql, $mode);
+  }
+
+  public function get_participant_by_id($id, $args = [])
+  {
+    $table_name = self::get_table_name(TableName::PARTICIPANTS);
+    $fields = isset($args['fields']) ? implode(', ', $args['fields']) : '*';
+    $mode = isset($args['mode']) ? $args['mode'] : OBJECT;
+    $sql = 'SELECT ' . $fields . ' FROM ' . $table_name . ' WHERE id = %d';
+    $sql = $this->wpdb->prepare($sql, $id);
+    return $this->wpdb->get_row($sql, $mode);
   }
 
   public function get_author_display_name(int|string $author_id): string
@@ -390,7 +508,7 @@ class Spot_Lite_Database
       );
     }
 
-    for ($i = 1; $i <= 3; $i++) {
+    for ($i = 1; $i <= 30; $i++) {
       $this->insert_activity(
         $faker->numberBetween(1, 10),
         $faker->numberBetween(1, 3),
@@ -398,7 +516,7 @@ class Spot_Lite_Database
       );
     }
 
-    for ($i = 1; $i <= 2; $i++) {
+    for ($i = 1; $i <= 30; $i++) {
       $this->insert_photo($faker->imageUrl(150, 150), $faker->numberBetween(1, 10));
     }
   }
