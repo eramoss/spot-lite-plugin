@@ -6,7 +6,11 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Svg\\' => array($vendorDir . '/phenx/php-svg-lib/src/Svg'),
     'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
+    'Masterminds\\' => array($vendorDir . '/masterminds/html5/src'),
     'Lite\\SpotLite\\' => array($baseDir . '/includes'),
+    'FontLib\\' => array($vendorDir . '/phenx/php-font-lib/src/FontLib'),
     'Faker\\' => array($vendorDir . '/fakerphp/faker/src/Faker'),
+    'Dompdf\\' => array($vendorDir . '/dompdf/dompdf/src'),
 );

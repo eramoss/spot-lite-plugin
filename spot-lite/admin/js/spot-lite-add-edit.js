@@ -69,13 +69,19 @@
   function get_activity_html(index) {
     return `
       <div class="activity-item">
-        <label>Participante:</label>
-        <input type="text" name="activities[${index}][participant_name]" list="participants-list" class="participant-input">
-        <label>Nascimento:</label>
-        <input type="date" name="activities[${index}][participant_birth_date]" class="birth-date-input">
-        <label>Descrição da atividade:</label>
-        <textarea name="activities[${index}][description]"></textarea>
-        <button type="button" class="remove-activity">Remove</button>
+          <div class='participant-container'>
+            <div class="input-group">
+              <label>Aluno:</label>
+              <input type="text" name="activities[${index}][participant_name]" list="participants-list" class="participant-input">
+            </div>
+            <div class="input-group">
+              <label>Data de nascimento do aluno:</label>
+              <input type="date" name="activities[${index}][participant_birth_date]" class="birth-date-input">
+            </div>
+          </div>
+          <label>Descrição da atividade:</label>
+          <textarea name="activities[${index}][description]"></textarea>
+          <button type="button" class="remove-activity">Remove</button>
       </div>
     `;
   }

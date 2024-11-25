@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Provide a admin area view for the plugin
  *
@@ -22,7 +21,6 @@ $list_table = new Spot_Lite_Reports_Table();
 $list_table->handle_bulk_actions();
 
 $list_table->prepare_items();
-
 
 $add_path = 'spot-lite/admin/partials/plugin-spot-lite-add-edit-report.php';
 

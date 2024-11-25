@@ -116,6 +116,7 @@ class Spot_Lite_Admin
 		$submenu_slug_adicionar_relatorio = plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-add-edit-report.php';
 		$submenu_slug_configuracoes = plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-settings.php';
 		$submenu_slug_analises = plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-analysis.php';
+		$submenu_slug_export = plugin_dir_path(__FILE__) . '/partials/plugin-spot-lite-export.php';
 
 		add_menu_page(
 			'Spot Lite',
@@ -172,6 +173,14 @@ class Spot_Lite_Admin
 			null
 		);
 
+		add_submenu_page(
+			$topmenu_slug,
+			'Spot Lite - Export',
+			'Exportar',
+			'spot_lite_pass',
+			$submenu_slug_export,
+			null
+		);
 	}
 
 }

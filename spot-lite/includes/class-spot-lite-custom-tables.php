@@ -98,7 +98,7 @@ class Spot_Lite_Reports_Table extends WP_List_Table
         }
         if ('export' === $this->current_action()) {
             $ids = isset($_REQUEST['id']) ? $_REQUEST['id'] : [];
-            spot_lite_log("exporting pdf for ids: " . json_encode($ids));
+            echo "<script>window.location.href = '" . admin_url("admin.php?page=spot-lite/admin/partials/plugin-spot-lite-export.php&ids=" . implode(',', $ids)) . "'</script>";
         }
     }
 

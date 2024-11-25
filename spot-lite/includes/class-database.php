@@ -214,12 +214,13 @@ class Spot_Lite_Database
         'status' => $status
       ]
     );
+    return $this->wpdb->insert_id;
   }
 
 
   public function insert_report($project_id, $title, $general_event_description, $event_date, $author, $keywords_for_search)
   {
-    return $this->insert(TableName::REPORTS, [
+    $this->insert(TableName::REPORTS, [
       'project_id' => $project_id,
       'title' => $title,
       'general_event_description' => $general_event_description,
@@ -227,6 +228,8 @@ class Spot_Lite_Database
       'author' => $author,
       'keywords_for_search' => $keywords_for_search
     ]);
+
+    return $this->wpdb->insert_id;
   }
 
   public function insert_activity($report_id, $participant_id, $description)
@@ -236,6 +239,7 @@ class Spot_Lite_Database
       'participant_id' => $participant_id,
       'description' => $description,
     ]);
+    return $this->wpdb->insert_id;
   }
 
   public function update_activities($report_id, $activities)
@@ -312,11 +316,12 @@ class Spot_Lite_Database
 
   public function insert_participant($name, $birth_date, $school)
   {
-    return $this->insert(TableName::PARTICIPANTS, [
+    $this->insert(TableName::PARTICIPANTS, [
       'name' => $name,
       'birth_date' => $birth_date,
       'school' => $school
     ]);
+    return $this->wpdb->insert_id;
   }
 
   public function insert_photo($url, $report_id)
@@ -325,6 +330,7 @@ class Spot_Lite_Database
       'url' => $url,
       'report_id' => $report_id
     ]);
+    return $this->wpdb->insert_id;
   }
 
 
@@ -419,6 +425,16 @@ class Spot_Lite_Database
     $sql = 'SELECT ' . $fields . ' FROM ' . $table_name . ' WHERE id = %d';
     $sql = $this->wpdb->prepare($sql, $id);
     return $this->wpdb->get_row($sql, $mode);
+  }
+
+  public function get_report_by_ids($ids, $args = [])
+  {
+    $table_name = self::get_table_name(TableName::REPORTS);
+    $fields = isset($args['fields']) ? implode(', ', $args['fields']) : '*';
+    $mode = isset($args['mode']) ? $args['mode'] : OBJECT;
+    $sql = 'SELECT ' . $fields . ' FROM ' . $table_name . ' WHERE id IN (' . implode(',', $ids) . ')';
+    $sql = $this->wpdb->prepare($sql, $ids);
+    return $this->wpdb->get_results($sql, $mode);
   }
 
   public function update_report_by_id($id, $args = [])
