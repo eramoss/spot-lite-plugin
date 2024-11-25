@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
 
-<<div class="wrap">
+<div class="wrap">
   <h1><?php echo $report_id ? 'Editar Relatório' : 'Adicionar novo Relatório'; ?></h1>
   <form method="post">
     <!-- Main Report Fields -->
@@ -156,14 +156,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="activity-item">
           <input type="hidden" name="activities[<?php echo $index; ?>][id]" value="<?php
              echo esc_attr($activity['id']); ?>">
-          <label>Aluno:</label>
-          <input type="text" name="activities[<?php echo $index; ?>][participant_name]"
-            value="<?php echo esc_attr($activity['participant_name']); ?>" list="participants-list"
-            class="participant-input">
 
-          <label>Data de nascimento do aluno:</label>
-          <input type="date" name="activities[<?php echo $index; ?>][participant_birth_date]"
-            value="<?php echo esc_attr($activity['participant_birth_date']); ?>" class="birth-date-input">
+          <div class='participant-container'>
+            <div class="input-group">
+              <label for="participant_name">Aluno:</label>
+              <input type="text" autocomplete="off" name="activities[<?php echo $index; ?>][participant_name]"
+                value="<?php echo esc_attr($activity['participant_name']); ?>" list="participants-list"
+                class="participant-input">
+            </div>
+
+            <div class="input-group">
+              <label for="participant_birth_date">Data de nascimento do aluno:</label>
+              <input type="date" name="activities[<?php echo $index; ?>][participant_birth_date]"
+                value="<?php echo esc_attr($activity['participant_birth_date']); ?>" class="birth-date-input">
+            </div>
+          </div>
 
           <label>Descrição da atividade:</label>
           <textarea
@@ -205,4 +212,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         class="button-primary"><?php echo $report_id ? 'Atualizar Relatório' : 'Adicionar Relatório'; ?></button>
     </p>
   </form>
-  </div>
+</div>
