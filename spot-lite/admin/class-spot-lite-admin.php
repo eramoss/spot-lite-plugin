@@ -72,7 +72,7 @@ class Spot_Lite_Admin
 	}
 	public function enqueue_add_edit_styles()
 	{
-		wp_enqueue_style($this->Spot_Lite, plugin_dir_url(__FILE__) . 'css/spot-lite-add-edit.css', array(), $this->version, 'all');
+		wp_enqueue_style("spot_lite_add_edit", plugin_dir_url(__FILE__) . 'css/spot-lite-add-edit.css', array(), $this->version, 'all');
 	}
 
 
