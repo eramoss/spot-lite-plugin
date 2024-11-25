@@ -93,10 +93,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $db->update_activities($report_id, $acts);
   }
 
-  if (isset($_POST['photos'])) {
-    $photos = $_POST['photos'];
-    $db->update_photos($report_id, $photos);
-  }
+
+  $photos = $_POST['photos'] ? $_POST['photos'] : [];
+  $db->update_photos($report_id, $photos);
+
 
   echo '<div class="updated">Report saved.</div>';
   echo '<script>setTimeout(function(){window.location.href = "' . admin_url('admin.php?page=spot-lite/admin/partials/plugin-spot-lite-display.php') . '";}, 1000);</script>';
