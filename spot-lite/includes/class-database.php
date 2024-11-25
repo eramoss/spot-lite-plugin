@@ -249,7 +249,6 @@ class Spot_Lite_Database
     $placeholders = [];
     $params = [];
     foreach ($activities as $activity) {
-      spot_lite_log("thatsh eeeeere: " . $activity);
       $placeholders[] = '(%d, %d, %s)';
       $params[] = $report_id;
       $params[] = $activity['participant_id'];

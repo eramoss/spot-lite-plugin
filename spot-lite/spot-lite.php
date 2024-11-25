@@ -38,6 +38,7 @@ define('ROOT_PLUGIN_URI', plugin_dir_url(__FILE__));
 define('ROOT_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('DEBUG_SPOT_LITE', true);
 define('FLUENTD_URL', getenv('FLUENTD_URL'));
+define('ALLOW_UNFILTERED_UPLOADS', true);
 
 function spot_lite_log($message, $level = 'INFO')
 {
