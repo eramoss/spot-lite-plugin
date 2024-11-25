@@ -1,0 +1,30 @@
+.drop-area {
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-bottom: 20px;
+}
+
+.drop-area.highlight {
+  background-color: #e0e7ff;
+  border-color: #6366f1;
+}
+
+.photo-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.photo-item input.photo-url {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.photo-item button {
+  margin-left: 5px;
+}

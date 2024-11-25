@@ -49,7 +49,7 @@ class Spot_Lite_Admin
 	 */
 	public function __construct($Spot_Lite, $version)
 	{
-
+		require_once plugin_dir_path(__DIR__) . 'includes/class-database.php';
 		$this->Spot_Lite = $Spot_Lite;
 		$this->version = $version;
 
@@ -66,7 +66,15 @@ class Spot_Lite_Admin
 
 		wp_register_style('prefix_bootstrap', '//cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
 		wp_enqueue_style('prefix_bootstrap');
+		if (isset($_GET['page']) && (str_contains($_GET['page'], 'spot-lite-add-edit'))) {
+			$this->enqueue_add_edit_styles();
+		}
 	}
+	public function enqueue_add_edit_styles()
+	{
+		wp_enqueue_style($this->Spot_Lite, plugin_dir_url(__FILE__) . 'css/spot-lite-add-edit.css', array(), $this->version, 'all');
+	}
+
 
 	/**
 	 * Register the JavaScript for the admin area.
@@ -79,6 +87,25 @@ class Spot_Lite_Admin
 		wp_enqueue_media();
 		wp_register_script('prefix_bootstrap', '//cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js');
 		wp_enqueue_script('prefix_bootstrap');
+
+		if (isset($_GET['page']) && (str_contains($_GET['page'], 'spot-lite-add-edit'))) {
+			$this->enqueue_add_edit_scripts();
+		}
+	}
+
+	public function enqueue_add_edit_scripts()
+	{
+		$db = Spot_Lite_Database::get_instance();
+		$existing_participants = $db->get_on_table(TableName::PARTICIPANTS, ['mode' => ARRAY_A]);
+		$rest_url = esc_url_raw(rest_url('wp/v2/media'));
+		$nonce = wp_create_nonce('wp_rest');
+
+		wp_enqueue_script("spot_lite_add_edit", plugin_dir_url(__FILE__) . 'js/spot-lite-add-edit.js', array('jquery'), $this->version, false);
+		wp_localize_script($this->Spot_Lite, 'spot_lite_add_edit', [
+			'existing_participants' => $existing_participants,
+			'rest_url' => $rest_url,
+			'nonce' => $nonce
+		]);
 	}
 
 	public function add_admin_menu()
