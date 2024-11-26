@@ -202,137 +202,6 @@ class Spot_Lite_Database
     }
   }
 
-  public function insert_project($name, $description, $start_date, $end_date, $status)
-  {
-    $this->insert(
-      TableName::PROJECTS,
-      [
-        'name' => $name,
-        'description' => $description,
-        'start_date' => $start_date,
-        'end_date' => $end_date,
-        'status' => $status
-      ]
-    );
-    return $this->wpdb->insert_id;
-  }
-
-
-  public function insert_report($project_id, $title, $general_event_description, $event_date, $author, $keywords_for_search)
-  {
-    $this->insert(TableName::REPORTS, [
-      'project_id' => $project_id,
-      'title' => $title,
-      'general_event_description' => $general_event_description,
-      'event_date' => $event_date,
-      'author' => $author,
-      'keywords_for_search' => $keywords_for_search
-    ]);
-
-    return $this->wpdb->insert_id;
-  }
-
-  public function insert_activity($report_id, $participant_id, $description)
-  {
-    $this->insert(TableName::ACTIVITIES, [
-      'report_id' => $report_id,
-      'participant_id' => $participant_id,
-      'description' => $description,
-    ]);
-    return $this->wpdb->insert_id;
-  }
-
-  public function update_activities($report_id, $activities)
-  {
-    $this->delete_all_activities($report_id);
-
-    $sql = '
-    INSERT INTO ' . self::get_table_name(TableName::ACTIVITIES) . ' (report_id, participant_id, description)
-    VALUES ';
-
-    $placeholders = [];
-    $params = [];
-    foreach ($activities as $activity) {
-      $placeholders[] = '(%d, %d, %s)';
-      $params[] = $report_id;
-      $params[] = $activity['participant_id'];
-      $params[] = $activity['description'];
-    }
-
-
-    $sql .= implode(', ', $placeholders);
-
-    $prepared = $this->wpdb->prepare($sql, $params);
-    return $this->wpdb->query($prepared);
-  }
-
-  public function exists_or_create_participant($name, $birth_date, $school)
-  {
-    $exists = $this->exists_participant($name);
-    if ($exists) {
-      $sql = 'UPDATE ' . self::get_table_name(TableName::PARTICIPANTS) . ' SET birth_date = %s, school = %s WHERE name = %s';
-      $this->wpdb->query($this->wpdb->prepare($sql, $birth_date, $school, $name));
-      return $exists;
-    }
-    $sql = 'INSERT INTO ' . self::get_table_name(TableName::PARTICIPANTS) . ' (name, birth_date, school) VALUES (%s, %s, %s)';
-    $id = $this->insert_participant($name, $birth_date, $school);
-    return $id;
-  }
-
-  public function exists_participant($name)
-  {
-    $table_name = self::get_table_name(TableName::PARTICIPANTS);
-    $sql = "SELECT id FROM $table_name WHERE name = %s";
-    $sql = $this->wpdb->prepare($sql, $name);
-    return $this->wpdb->get_var($sql);
-  }
-
-  public function delete_all_activities($report_id)
-  {
-    $this->wpdb->delete(self::get_table_name(TableName::ACTIVITIES), ['report_id' => $report_id]);
-  }
-
-  public function update_photos($report_id, $photos)
-  {
-    $this->delete_all_photos($report_id);
-    $sql = 'INSERT INTO ' . self::get_table_name(TableName::PHOTOS) . ' (report_id, url) VALUES ';
-
-    $placeholders = [];
-    $params = [];
-    foreach ($photos as $photo) {
-      $placeholders[] = '(%d, %s)';
-      $params[] = $report_id;
-      $params[] = $photo['url'];
-    }
-    $sql .= implode(', ', $placeholders);
-    $prepared = $this->wpdb->prepare($sql, $params);
-    return $this->wpdb->query($prepared);
-  }
-
-  public function delete_all_photos($report_id)
-  {
-    $this->wpdb->delete(self::get_table_name(TableName::PHOTOS), ['report_id' => $report_id]);
-  }
-
-  public function insert_participant($name, $birth_date, $school)
-  {
-    $this->insert(TableName::PARTICIPANTS, [
-      'name' => $name,
-      'birth_date' => $birth_date,
-      'school' => $school
-    ]);
-    return $this->wpdb->insert_id;
-  }
-
-  public function insert_photo($url, $report_id)
-  {
-    $this->insert(TableName::PHOTOS, [
-      'url' => $url,
-      'report_id' => $report_id
-    ]);
-    return $this->wpdb->insert_id;
-  }
-
 
   /**
    * Get all values of a table from the database
@@ -417,6 +286,37 @@ class Spot_Lite_Database
     return $this->wpdb->get_results($sql);
   }
 
+
+  public function insert_project($name, $description, $start_date, $end_date, $status)
+  {
+    $this->insert(
+      TableName::PROJECTS,
+      [
+        'name' => $name,
+        'description' => $description,
+        'start_date' => $start_date,
+        'end_date' => $end_date,
+        'status' => $status
+      ]
+    );
+    return $this->wpdb->insert_id;
+  }
+
+
+  public function insert_report($project_id, $title, $general_event_description, $event_date, $author, $keywords_for_search)
+  {
+    $this->insert(TableName::REPORTS, [
+      'project_id' => $project_id,
+      'title' => $title,
+      'general_event_description' => $general_event_description,
+      'event_date' => $event_date,
+      'author' => $author,
+      'keywords_for_search' => $keywords_for_search
+    ]);
+
+    return $this->wpdb->insert_id;
+  }
+
   public function get_report_by_id($id, $args = [])
   {
     $table_name = self::get_table_name(TableName::REPORTS);
@@ -442,33 +342,11 @@ class Spot_Lite_Database
     $table_name = self::get_table_name(TableName::REPORTS);
     $this->wpdb->update($table_name, $args, ['id' => $id]);
   }
-
-  public function get_activities_by_report_id($report_id, $args = [])
+  public function delete_reports(array $ids): void
   {
-    $table_name = self::get_table_name(TableName::ACTIVITIES);
-    $mode = isset($args['mode']) ? $args['mode'] : OBJECT;
-    $sql = "SELECT * FROM $table_name WHERE report_id = %d";
-    $sql = $this->wpdb->prepare($sql, $report_id);
-    return $this->wpdb->get_results($sql, $mode);
-  }
-
-  public function get_photos_by_report_id($report_id, $args = [])
-  {
-    $table_name = self::get_table_name(TableName::PHOTOS);
-    $mode = isset($args["mode"]) ? $args["mode"] : OBJECT;
-    $sql = "SELECT * FROM $table_name WHERE report_id = %d";
-    $sql = $this->wpdb->prepare($sql, $report_id);
-    return $this->wpdb->get_results($sql, $mode);
-  }
-
-  public function get_participant_by_id($id, $args = [])
-  {
-    $table_name = self::get_table_name(TableName::PARTICIPANTS);
-    $fields = isset($args['fields']) ? implode(', ', $args['fields']) : '*';
-    $mode = isset($args['mode']) ? $args['mode'] : OBJECT;
-    $sql = 'SELECT ' . $fields . ' FROM ' . $table_name . ' WHERE id = %d';
-    $sql = $this->wpdb->prepare($sql, $id);
-    return $this->wpdb->get_row($sql, $mode);
+    $table_name = self::get_table_name(TableName::REPORTS);
+    $sql = "DELETE FROM $table_name WHERE id IN (" . implode(",", $ids) . ")";
+    $this->wpdb->query($sql);
   }
 
   public function get_author_display_name(int|string $author_id): string
@@ -481,12 +359,147 @@ class Spot_Lite_Database
     return $author->display_name;
   }
 
-  public function delete_reports(array $ids): void
+
+  public function insert_activity($report_id, $participant_id, $description)
   {
-    $table_name = self::get_table_name(TableName::REPORTS);
-    $sql = "DELETE FROM $table_name WHERE id IN (" . implode(",", $ids) . ")";
-    $this->wpdb->query($sql);
+    $this->insert(TableName::ACTIVITIES, [
+      'report_id' => $report_id,
+      'participant_id' => $participant_id,
+      'description' => $description,
+    ]);
+    return $this->wpdb->insert_id;
   }
+
+  public function update_activities($report_id, $activities)
+  {
+    $this->delete_all_activities($report_id);
+
+    $sql = '
+    INSERT INTO ' . self::get_table_name(TableName::ACTIVITIES) . ' (report_id, participant_id, description)
+    VALUES ';
+
+    $placeholders = [];
+    $params = [];
+    foreach ($activities as $activity) {
+      $placeholders[] = '(%d, %d, %s)';
+      $params[] = $report_id;
+      $params[] = $activity['participant_id'];
+      $params[] = $activity['description'];
+    }
+
+
+    $sql .= implode(', ', $placeholders);
+
+    $prepared = $this->wpdb->prepare($sql, $params);
+    return $this->wpdb->query($prepared);
+  }
+
+  public function exists_participant($name)
+  {
+    $table_name = self::get_table_name(TableName::PARTICIPANTS);
+    $sql = "SELECT id FROM $table_name WHERE name = %s";
+    $sql = $this->wpdb->prepare($sql, $name);
+    return $this->wpdb->get_var($sql);
+  }
+
+  public function delete_all_activities($report_id)
+  {
+    $this->wpdb->delete(self::get_table_name(TableName::ACTIVITIES), ['report_id' => $report_id]);
+  }
+  public function get_activities_by_report_id($report_id, $args = [])
+  {
+    $table_name = self::get_table_name(TableName::ACTIVITIES);
+    $mode = isset($args['mode']) ? $args['mode'] : OBJECT;
+    $sql = "SELECT * FROM $table_name WHERE report_id = %d";
+    $sql = $this->wpdb->prepare($sql, $report_id);
+    return $this->wpdb->get_results($sql, $mode);
+  }
+
+
+
+  public function insert_participant($name, $birth_date, $school)
+  {
+    $this->insert(TableName::PARTICIPANTS, [
+      'name' => $name,
+      'birth_date' => $birth_date,
+      'school' => $school
+    ]);
+    return $this->wpdb->insert_id;
+  }
+  public function exists_or_create_participant($name, $birth_date, $school)
+  {
+    $exists = $this->exists_participant($name);
+    if ($exists) {
+      $sql = 'UPDATE ' . self::get_table_name(TableName::PARTICIPANTS) . ' SET birth_date = %s, school = %s WHERE name = %s';
+      $this->wpdb->query($this->wpdb->prepare($sql, $birth_date, $school, $name));
+      return $exists;
+    }
+    $sql = 'INSERT INTO ' . self::get_table_name(TableName::PARTICIPANTS) . ' (name, birth_date, school) VALUES (%s, %s, %s)';
+    $id = $this->insert_participant($name, $birth_date, $school);
+    return $id;
+  }
+  public function get_participant_by_id($id, $args = [])
+  {
+    $table_name = self::get_table_name(TableName::PARTICIPANTS);
+    $fields = isset($args['fields']) ? implode(', ', $args['fields']) : '*';
+    $mode = isset($args['mode']) ? $args['mode'] : OBJECT;
+    $sql = 'SELECT ' . $fields . ' FROM ' . $table_name . ' WHERE id = %d';
+    $sql = $this->wpdb->prepare($sql, $id);
+    return $this->wpdb->get_row($sql, $mode);
+  }
+
+
+
+  public function insert_photo($url, $report_id)
+  {
+    $this->insert(TableName::PHOTOS, [
+      'url' => $url,
+      'report_id' => $report_id
+    ]);
+    return $this->wpdb->insert_id;
+  }
+
+  public function update_photos($report_id, $photos)
+  {
+    $this->delete_all_photos($report_id);
+    $sql = 'INSERT INTO ' . self::get_table_name(TableName::PHOTOS) . ' (report_id, url) VALUES ';
+
+    $placeholders = [];
+    $params = [];
+    foreach ($photos as $photo) {
+      $placeholders[] = '(%d, %s)';
+      $params[] = $report_id;
+      $params[] = $photo['url'];
+    }
+    $sql .= implode(', ', $placeholders);
+    $prepared = $this->wpdb->prepare($sql, $params);
+    return $this->wpdb->query($prepared);
+  }
+
+  public function delete_all_photos($report_id)
+  {
+    $this->wpdb->delete(self::get_table_name(TableName::PHOTOS), ['report_id' => $report_id]);
+  }
+
+  public function get_photos_by_report_id($report_id, $args = [])
+  {
+    $table_name = self::get_table_name(TableName::PHOTOS);
+    $mode = isset($args["mode"]) ? $args["mode"] : OBJECT;
+    $sql = "SELECT * FROM $table_name WHERE report_id = %d";
+    $sql = $this->wpdb->prepare($sql, $report_id);
+    return $this->wpdb->get_results($sql, $mode);
+  }
+
+
+
+
+
+
+
+
+
+
+
 
   /// DEVELOPMENT ONLY
 

@@ -15,8 +15,5 @@
         {
             "name": "Lite Univali"
         }
-    ],
-    "require": {
-        "dompdf/dompdf": "^2.0"
-    }
+    ]
 }

@@ -72,7 +72,7 @@
           <div class='participant-container'>
             <div class="input-group">
               <label>Aluno:</label>
-              <input type="text" name="activities[${index}][participant_name]" list="participants-list" class="participant-input">
+              <input type="text" autocomplete="off" name="activities[${index}][participant_name]" list="participants-list" class="participant-input">
             </div>
             <div class="input-group">
               <label>Data de nascimento do aluno:</label>

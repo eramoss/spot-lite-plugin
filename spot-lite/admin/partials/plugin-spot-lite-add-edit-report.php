@@ -90,6 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $act['report_id'] = $report_id;
       $acts[] = $act;
     }
+    spot_lite_log($acts);
     $db->update_activities($report_id, $acts);
   }
 

@@ -1,7 +1,7 @@
 <?php
 
 if (isset($_GET["ids"])) {
-  require_once ROOT_PLUGIN_PATH . 'includes/class-html-exporter.php';
+  require_once ROOT_PLUGIN_PATH . 'includes/LibExporter/class-html-exporter.php';
   require_once ROOT_PLUGIN_PATH . 'includes/class-database.php';
   $db = Spot_Lite_Database::get_instance();
 
@@ -13,7 +13,9 @@ if (isset($_GET["ids"])) {
     $photos = array_map(function ($photo) {
       return $photo['url'];
     }, $photos);
+
     $activities = $db->get_activities_by_report_id($report['id'], ['mode' => ARRAY_A]);
+
     $activities = array_map(function ($activity) use ($db) {
       $participant = $db->get_participant_by_id($activity['participant_id'], ['mode' => ARRAY_A]);
       $activity['participant_name'] = $participant['name'];
@@ -22,17 +24,19 @@ if (isset($_GET["ids"])) {
       $activity['participant_age'] = $age_in_years;
       return $activity;
     }, $activities);
-    $html = $exporter->mount($exporter->template, $report['title'], $report['general_event_description'], $photos, $activities);
+
+    $html = $exporter->mount(file_get_contents(ROOT_PLUGIN_PATH . 'includes/LibExporter/templates/class-html-template.html'), $report['title'], $report['general_event_description'], $photos, $activities);
+
     echo "<script>
-    const newWindow = window.open('', '_blank', 'width=800,height=600');
-    if (newWindow) {
-        newWindow.document.open();
-        newWindow.document.write(" . json_encode($html) . ");
-        newWindow.document.close();
-    } else {
-        alert('Pop-up blocked! Please allow pop-ups for this website.');
-    }
-</script>";
+            const w$report[id] = window.open('$report[id]', '_blank', 'width=800,height=600');
+            if (w$report[id]) {
+                w$report[id].document.open();
+                w$report[id].document.write(" . json_encode($html) . ");
+                w$report[id].document.close();
+            } else {
+                alert('Pop-up blocked! Please allow pop-ups for this website.');
+            }
+        </script>";
   }
 }
 
